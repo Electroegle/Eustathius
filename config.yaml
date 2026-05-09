@@ -1,0 +1,19 @@
+default_priority: balanced
+council_enabled: false
+max_cpu_for_heavy_model: 75
+max_mem_for_heavy_model: 80
+skill_timeout: 120
+log_level: INFO
+log_file: logs/eustathius.log
+memory:
+  enabled: false
+autonomous:
+  enabled: false
+personas:
+  default: "You are Eustathius, a masterful and resourceful AI assistant."
+  coder: "You are an expert software engineer. Provide clean, optimal code with explanations."
+auto_pull_missing_models: true
+react:
+  enabled: false
+tools:
+  enabled: false

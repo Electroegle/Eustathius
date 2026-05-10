@@ -1,3 +1,101 @@
+default_priority: balanced
+council_enabled: false
+max_cpu_for_heavy_model: 75
+max_mem_for_heavy_model: 80
+skill_timeout: 120
+log_level: INFO
+log_file: logs/eustathius.log
+backup_dir: ~/.eustathius_backups
+plugin_dirs:
+  - plugins
+  - plugins/external
+
+memory:
+  enabled: true
+  embedding_model: all-MiniLM-L6-v2
+  history_depth: 20
+  store_dir: ~/.eustathius_memory
+  summarize_old: true
+  use_chroma: true
+  chroma_persist_dir: memory_db
+  consolidation_interval_hours: 1
+
+task_decomposer:
+  enabled: true
+  max_subtasks: 5
+
+autonomous:
+  enabled: false
+  max_iterations: 5
+  self_review_model: null
+
+code_interpreter:
+  enabled: true
+  timeout: 15
+
+web_scraper:
+  enabled: true
+  user_agent: Eustathius/6.0
+
+council_voting:
+  use_confidence: true
+  confidence_prompt: "Rate your answer's confidence from 0.0 (unsure) to 1.0 (certain). Output only the number."
+  debate_rounds: 2
+  refinement_prompt: "You saw other answers: {other_answers}. Improve your answer."
+
+persistent_queue: true
+
+scheduler:
+  enabled: false
+  job_file: ~/.eustathius_scheduled.json
+
+prompt_optimizer:
+  enabled: true
+  store_dir: ~/.eustathius_optimized_prompts
+
+multi_modal:
+  enabled: true
+  image_models:
+    - llava
+    - bakllava
+    - llava-phi3
+
+safety:
+  enabled: true
+  filter_keywords_path: null
+  use_llm_filter: true
+
+personas:
+  default: "You are Eustathius, a masterful and resourceful AI assistant."
+  coder: "You are an expert software engineer. Provide clean, optimal code with explanations."
+  tutor: "You are a patient teacher. Explain concepts step by step with examples."
+  creative: "You are an imaginative writer. Generate creative stories, poetry, and ideas."
+
+conversation:
+  save_sessions: true
+  sessions_dir: conversations
+
+auto_pull_missing_models: true
+
+voice:
+  enabled: false
+  tts_engine: pyttsx3
+  input_enabled: true
+  output_enabled: true
+  input_device_index: null
+  language: en-US
+  listen_seconds: 5
+  sample_rate: 16000
+  rate: 175
+  volume: 0.9
+  voice_id: null
+
+react:
+  enabled: true
+  max_steps: 5
+  verbose: false
+
+tools:
   enabled: true
   allow_user_confirmation: true
 

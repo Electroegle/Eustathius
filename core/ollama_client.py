@@ -1,61 +1,150 @@
-import asyncio, aiohttp, json
-from typing import List, Optional
+import asyncio
+import json
+from typing import Dict, List, Optional
+
+import aiohttp
+
 from core.logger import logger
 
 OLLAMA_URL = "http://localhost:11434"
+REQUEST_TIMEOUT = aiohttp.ClientTimeout(total=180, connect=5)
 
-class ModelMemoryError(Exception): pass
+
+class ModelMemoryError(Exception):
+    pass
+
 
 async def health_check() -> bool:
     try:
-        async with aiohttp.ClientSession() as s:
-            async with s.get(f"{OLLAMA_URL}/") as r: return r.status == 200
-    except: return False
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+            async with session.get(f"{OLLAMA_URL}/") as response:
+                return response.status == 200
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return False
+
 
 async def list_models_async() -> List[str]:
-    async with aiohttp.ClientSession() as s:
-        async with s.get(f"{OLLAMA_URL}/api/tags") as r:
-            data = await r.json()
-            return [m["name"] for m in data.get("models", [])]
-
-async def query_model(model: str, prompt: str, system="", temperature=0.7, max_tokens=1000) -> str:
-    payload = {"model": model, "messages": [{"role":"system","content":system},{"role":"user","content":prompt}],
-               "options": {"temperature":temperature,"num_predict":max_tokens},"stream":False}
     try:
-        async with aiohttp.ClientSession() as s:
-            async with s.post(f"{OLLAMA_URL}/api/chat", json=payload) as resp:
-                raw = await resp.text()
-                ctype = resp.headers.get("Content-Type","")
-        # NDJSON detection
-        if "x-ndjson" in ctype or raw.strip().startswith("{"):
-            lines = raw.strip().splitlines()
-            parts = []
-            for line in lines:
-                if not line.strip(): continue
-                try:
-                    obj = json.loads(line)
-                    if "error" in obj:
-                        err = obj["error"]
-                        logger.error(f"Ollama error: {err}")
-                        if "memory" in err.lower(): raise ModelMemoryError(err)
-                        return f"[Ollama Error] {err}"
-                    if "message" in obj and "content" in obj["message"]:
-                        parts.append(obj["message"]["content"])
-                    elif "response" in obj:
-                        parts.append(obj["response"])
-                except json.JSONDecodeError: pass
-            if parts: return "".join(parts).strip()
-        data = json.loads(raw)
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
+            async with session.get(f"{OLLAMA_URL}/api/tags") as response:
+                if response.status != 200:
+                    logger.error(f"Ollama tags request failed with HTTP {response.status}")
+                    return []
+                data = await response.json(content_type=None)
+                return [model["name"] for model in data.get("models", []) if "name" in model]
+    except (aiohttp.ClientError, asyncio.TimeoutError, json.JSONDecodeError) as exc:
+        logger.error(f"Could not list Ollama models: {exc}")
+        return []
+
+
+async def pull_model(model: str) -> bool:
+    proc = await asyncio.create_subprocess_exec(
+        "ollama",
+        "pull",
+        model,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    await proc.communicate()
+    return proc.returncode == 0
+
+
+async def ensure_model_available(model: str) -> bool:
+    if model in await list_models_async():
+        return True
+    from config_loader import config
+
+    if config.get("auto_pull_missing_models", True):
+        return await pull_model(model)
+    return False
+
+
+def _parse_ollama_error(message: str) -> str:
+    if "memory" in message.lower():
+        raise ModelMemoryError(message)
+    return f"[Ollama Error] {message}"
+
+
+async def query_model(
+    model: str,
+    prompt: str,
+    system: str = "",
+    temperature: float = 0.7,
+    max_tokens: int = 1000,
+    tools: Optional[List[Dict]] = None,
+) -> str:
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
+        "options": {"temperature": temperature, "num_predict": max_tokens},
+        "stream": False,
+    }
+    if tools:
+        payload["tools"] = tools
+
+    try:
+        async with aiohttp.ClientSession(timeout=REQUEST_TIMEOUT) as session:
+            async with session.post(f"{OLLAMA_URL}/api/chat", json=payload) as response:
+                raw = await response.text()
+                content_type = response.headers.get("Content-Type", "")
+                if response.status >= 400:
+                    return _parse_ollama_error(raw.strip() or f"HTTP {response.status}")
+
+        if "x-ndjson" in content_type:
+            return _parse_ndjson(raw)
+
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError:
+            return raw.strip()
+
         if "error" in data:
-            err = data["error"]
-            if "memory" in err.lower(): raise ModelMemoryError(err)
-            return f"[Ollama Error] {err}"
+            return _parse_ollama_error(data["error"])
         if "message" in data and "content" in data["message"]:
             return data["message"]["content"].strip()
-        if "response" in data: return data["response"].strip()
+        if "response" in data:
+            return data["response"].strip()
         return str(data)
-    except ModelMemoryError: raise
-    except aiohttp.ClientError as e:
-        logger.error(f"Connection error: {e}"); return f"[Connection Error] {e}"
-    except Exception as e:
-        logger.error(f"Query error: {e}"); return f"[Error] {e}"
+    except ModelMemoryError:
+        raise
+    except (aiohttp.ClientError, asyncio.TimeoutError) as exc:
+        logger.error(f"Connection error: {exc}")
+        return f"[Connection Error] {exc}"
+    except Exception as exc:
+        logger.error(f"Query error: {exc}")
+        return f"[Error] {exc}"
+
+
+def _parse_ndjson(raw: str) -> str:
+    parts = []
+    for line in raw.strip().splitlines():
+        if not line.strip():
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if "error" in obj:
+            return _parse_ollama_error(obj["error"])
+        if "message" in obj and "content" in obj["message"]:
+            parts.append(obj["message"]["content"])
+        elif "response" in obj:
+            parts.append(obj["response"])
+    return "".join(parts).strip()
+
+
+async def get_embeddings(model: str, text: str) -> List[float]:
+    try:
+        async with aiohttp.ClientSession(timeout=REQUEST_TIMEOUT) as session:
+            async with session.post(f"{OLLAMA_URL}/api/embeddings", json={"model": model, "prompt": text}) as response:
+                if response.status != 200:
+                    logger.error(f"Ollama embeddings request failed with HTTP {response.status}")
+                    return []
+                data = await response.json(content_type=None)
+                return data.get("embedding", [])
+    except (aiohttp.ClientError, asyncio.TimeoutError, json.JSONDecodeError) as exc:
+        logger.error(f"Embedding error: {exc}")
+        return []

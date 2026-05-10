@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Runtime state
+.eustathius_history
+logs/
+conversations/
+memory_db/
+db/*.db
+db/*.sqlite*
+db/task_queue.json
+
+# Local config/secrets
+.env
+.env.*
+*.local.yaml
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

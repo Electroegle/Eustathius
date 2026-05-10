@@ -1,5 +1,7 @@
-from . import SkillBase
 from core.ollama_client import query_model
+
+from . import SkillBase
+
 
 class SummarizerSkill(SkillBase):
     name="summarizer"; description="Summarize long texts."

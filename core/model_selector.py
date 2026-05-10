@@ -1,9 +1,10 @@
-import asyncio, re
-from .ollama_client import list_models_async, ensure_model_available, ModelMemoryError
-from .sys_monitor import is_system_under_load, model_fits_in_ram
-from db.store import get_model_benchmark, get_model_stats
+import re
+
 from config_loader import config
-from core.logger import logger
+from db.store import get_model_benchmark, get_model_stats
+
+from .ollama_client import ensure_model_available, list_models_async
+from .sys_monitor import is_system_under_load, model_fits_in_ram
 
 _MEMORY_FAILED_MODELS = set()
 def mark_model_memory_failed(m): _MEMORY_FAILED_MODELS.add(m)

@@ -1,6 +1,5 @@
 import asyncio
 import json
-from typing import Dict, List, Optional
 
 import aiohttp
 
@@ -23,7 +22,7 @@ async def health_check() -> bool:
         return False
 
 
-async def list_models_async() -> List[str]:
+async def list_models_async() -> list[str]:
     try:
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
             async with session.get(f"{OLLAMA_URL}/api/tags") as response:
@@ -71,7 +70,7 @@ async def query_model(
     system: str = "",
     temperature: float = 0.7,
     max_tokens: int = 1000,
-    tools: Optional[List[Dict]] = None,
+    tools: list[dict] | None = None,
 ) -> str:
     payload = {
         "model": model,
@@ -136,7 +135,7 @@ def _parse_ndjson(raw: str) -> str:
     return "".join(parts).strip()
 
 
-async def get_embeddings(model: str, text: str) -> List[float]:
+async def get_embeddings(model: str, text: str) -> list[float]:
     try:
         async with aiohttp.ClientSession(timeout=REQUEST_TIMEOUT) as session:
             async with session.post(f"{OLLAMA_URL}/api/embeddings", json={"model": model, "prompt": text}) as response:

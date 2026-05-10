@@ -1,6 +1,9 @@
-from . import SkillBase
 from pathlib import Path
+
 from rich.prompt import Prompt
+
+from . import SkillBase
+
 
 class FileSearchSkill(SkillBase):
     name="file_search"; description="Find files by name pattern."

@@ -1,5 +1,6 @@
+
 from . import SkillBase
-from core.ollama_client import query_model
+
 
 class ReactSkill(SkillBase):
     name="react"; description="Use ReAct reasoning with tools."

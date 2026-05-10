@@ -1,7 +1,12 @@
-from . import SkillBase
-import httpx, re
+import re
+
+import httpx
 from bs4 import BeautifulSoup
+
 from config_loader import config
+
+from . import SkillBase
+
 
 class WebScraperSkill(SkillBase):
     name="web_scraper"; description="Extract text from a URL."

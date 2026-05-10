@@ -1,8 +1,8 @@
-import sqlite3
 import json
+import sqlite3
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from contextlib import contextmanager
 
 DB_PATH = Path(__file__).parent / "eustathius.db"
 

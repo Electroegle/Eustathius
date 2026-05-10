@@ -1,7 +1,4 @@
-import asyncio
 from core.ollama_client import query_model
-from config_loader import config
-from core.logger import logger
 
 REASONING_PROMPT = """You are a problem-solving agent. You have access to these tools:
 {tools}

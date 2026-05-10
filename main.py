@@ -1,6 +1,5 @@
 import asyncio
 import shutil
-import sys
 import traceback
 
 from prompt_toolkit import PromptSession

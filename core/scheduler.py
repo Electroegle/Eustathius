@@ -1,7 +1,11 @@
-import json, asyncio, schedule
+import asyncio
+import json
 from pathlib import Path
+
+import schedule
+
 from config_loader import config
-from core.logger import logger
+
 
 class Scheduler:
     def __init__(self, callback):

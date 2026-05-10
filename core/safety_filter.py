@@ -1,5 +1,7 @@
 import re
+
 from config_loader import config
+
 
 class SafetyFilter:
     def __init__(self):

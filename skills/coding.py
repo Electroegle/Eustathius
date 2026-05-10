@@ -1,5 +1,8 @@
-from . import SkillBase
 from core.ollama_client import query_model
+
+from . import SkillBase
+
+
 class CodingSkill(SkillBase):
     name="coding"; description="Code writer/reviewer"
     keywords=["code","refactor","debug","function","class","script","program"]

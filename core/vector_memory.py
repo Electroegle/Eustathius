@@ -4,6 +4,7 @@ from pathlib import Path
 
 import chromadb
 from sentence_transformers import SentenceTransformer
+
 from config_loader import config
 from core.logger import logger
 

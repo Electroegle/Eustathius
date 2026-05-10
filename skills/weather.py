@@ -1,5 +1,7 @@
-from . import SkillBase
 import httpx
+
+from . import SkillBase
+
 
 class WeatherSkill(SkillBase):
     name="weather"; description="Get current weather for a city."

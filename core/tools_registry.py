@@ -1,12 +1,12 @@
 import asyncio
-from typing import Dict, Callable
+
 
 class Tool:
     def __init__(self, name, description, func):
         self.name = name; self.description = description; self.func = func
 
 class ToolRegistry:
-    def __init__(self): self.tools: Dict[str, Tool] = {}
+    def __init__(self): self.tools: dict[str, Tool] = {}
     def register(self, tool: Tool): self.tools[tool.name] = tool
     def list_names(self): return list(self.tools.keys())
     def describe(self):

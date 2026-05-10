@@ -1,5 +1,9 @@
+import platform
+
+import psutil
+
 from skills import SkillBase
-import psutil, platform
+
 
 class SystemInfoSkill(SkillBase):
     name="system_info"; description="Report system statistics."

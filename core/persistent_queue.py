@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from config_loader import config
 
 QUEUE_FILE = Path(__file__).parent / ".." / "db" / "task_queue.json"
 

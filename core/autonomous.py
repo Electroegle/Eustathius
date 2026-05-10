@@ -1,9 +1,9 @@
-import asyncio
 from rich.prompt import Confirm
-from core.ollama_client import query_model
-from core.theme import console, rule, info, ok, warn, PRIMARY
+
 from config_loader import config
 from core.logger import logger
+from core.ollama_client import query_model
+from core.theme import PRIMARY, console, info, ok, warn
 
 REVIEW_PROMPT = """Review the solution. If you need user clarification, start with "QUESTION:".
 Otherwise, provide improvements as a numbered list. Output "OK" if perfect.

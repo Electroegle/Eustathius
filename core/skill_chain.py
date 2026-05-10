@@ -1,5 +1,6 @@
 from core.task_router import SKILLS
 
+
 class SkillChain:
     def __init__(self): self._skills = {s.name: s for s in SKILLS}
     async def execute_skill(self, skill_name, task, model, council=False, **kwargs):

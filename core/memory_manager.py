@@ -1,7 +1,11 @@
-import json, numpy as np
+import json
 from pathlib import Path
-from config_loader import config
+
+import numpy as np
 from sentence_transformers import SentenceTransformer
+
+from config_loader import config
+
 
 class MemoryManager:
     def __init__(self):

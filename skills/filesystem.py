@@ -6,7 +6,6 @@ from rich.prompt import Confirm
 
 from . import SkillBase
 
-
 IMAGE_EXTENSIONS = {
     ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif", ".tif", ".tiff",
 }

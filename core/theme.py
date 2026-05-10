@@ -4,8 +4,8 @@ theme.py
 Single source of truth for Eustathius UI colours and styles.
 """
 
-from rich.theme import Theme
 from rich.console import Console
+from rich.theme import Theme
 
 # Palette
 PRIMARY = "rgb(74,144,226)"     # blue: labels, borders, accents

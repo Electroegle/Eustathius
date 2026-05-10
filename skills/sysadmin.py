@@ -1,6 +1,9 @@
-from . import SkillBase
-from core.ollama_client import query_model
 import asyncio
+
+from core.ollama_client import query_model
+
+from . import SkillBase
+
 
 class SysAdminSkill(SkillBase):
     name="sysadmin"; description="Execute safe shell commands."

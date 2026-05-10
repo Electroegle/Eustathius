@@ -1,29 +1,33 @@
-import asyncio, sys
-from rich.prompt import Prompt, Confirm
-from rich.table import Table
+import asyncio
+import sys
 from pathlib import Path
-from core.theme import console, rule, info, ok, warn, error, PRIMARY, MUTED
+
+from rich.prompt import Confirm, Prompt
+from rich.table import Table
+
 from config_loader import config
 from core.logger import logger
-from .model_selector import select_best_model, mark_model_memory_failed
-from .ollama_client import query_model, ensure_model_available, health_check, ModelMemoryError
-from .council import council_query
-from .task_router import route_task
+from core.theme import PRIMARY, console, error, info, ok, rule, warn
 from db.store import add_task, get_recent_tasks, record_model_result
-from fs.file_ops import read_file, write_file, edit_file, revert_file
-from .memory_manager import MemoryManager
-from .vector_memory import VectorMemory
-from .task_decomposer import decompose_task
+from fs.file_ops import edit_file, read_file, revert_file, write_file
+
 from .autonomous import autonomous_loop
-from .skill_chain import skill_chain
-from .persistent_queue import save_queue, load_queue
-from .prompt_optimizer import PromptOptimizer
-from .scheduler import Scheduler
-from .safety_filter import SafetyFilter
 from .conversation import ConversationManager
+from .council import council_query
+from .memory_manager import MemoryManager
+from .model_selector import mark_model_memory_failed, select_best_model
+from .ollama_client import ModelMemoryError, health_check
+from .persistent_queue import load_queue, save_queue
+from .prompt_optimizer import PromptOptimizer
 from .react_planner import react_loop
+from .safety_filter import SafetyFilter
+from .scheduler import Scheduler
+from .task_decomposer import decompose_task
+from .task_router import route_task
 from .tools_registry import create_default_tools
+from .vector_memory import VectorMemory
 from .voice_manager import VoiceManager
+
 
 class EustathiusAgent:
     def __init__(self):
@@ -239,7 +243,9 @@ class EustathiusAgent:
         except Exception as e: return f"Error: {e}"
 
     async def reload_config(self):
-        import importlib, config_loader
+        import importlib
+
+        import config_loader
         importlib.reload(config_loader)
         from config_loader import config as new_config
         self.priority = new_config.get("default_priority", "balanced")

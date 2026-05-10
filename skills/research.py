@@ -1,5 +1,8 @@
-from . import SkillBase
 from core.ollama_client import query_model
+
+from . import SkillBase
+
+
 class ResearchSkill(SkillBase):
     name="research"; description="General knowledge assistant."
     keywords=["explain","what is","how to","tell me","research"]

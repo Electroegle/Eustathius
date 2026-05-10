@@ -1,6 +1,9 @@
-import importlib, inspect
+import importlib
+import inspect
 from pathlib import Path
+
 from . import SkillBase
+
 
 def _load_from_dir(pkg_prefix: str, directory: Path) -> list:
     skills = []

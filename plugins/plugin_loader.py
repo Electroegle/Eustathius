@@ -1,6 +1,9 @@
-import importlib, inspect
+import importlib
+import inspect
 from pathlib import Path
+
 from skills import SkillBase
+
 
 def load_plugins():
     plugins = []

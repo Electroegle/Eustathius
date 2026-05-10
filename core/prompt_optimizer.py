@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+
 from config_loader import config
 
 OPT_DIR = Path(config.get("prompt_optimizer", {}).get("store_dir", "~/.eustathius_optimized_prompts")).expanduser()

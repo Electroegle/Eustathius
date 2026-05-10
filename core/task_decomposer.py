@@ -1,5 +1,6 @@
-from .ollama_client import query_model
 from config_loader import config
+
+from .ollama_client import query_model
 
 DECOMPOSE_PROMPT = """Break user request into a numbered list of independent subtasks (max {max_subtasks}). Output only the list.
 User request: {user_request}

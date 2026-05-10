@@ -15,13 +15,15 @@ Flow:
 """
 
 import asyncio
-from rich.table import Table
+
 from rich.padding import Padding
-from core.ollama_client import query_model
-from core.theme import console, rule, info, PRIMARY, MUTED, DIM_TEXT, BRIGHT
-from db.store import add_council_session
-from core.logger import logger
+from rich.table import Table
+
 from config_loader import config
+from core.logger import logger
+from core.ollama_client import query_model
+from core.theme import BRIGHT, DIM_TEXT, MUTED, PRIMARY, console
+from db.store import add_council_session
 
 # ── Prompts ──────────────────────────────────────────────────────────────────
 

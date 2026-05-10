@@ -14,13 +14,14 @@ The skill_loader recursively finds every SkillBase subclass in both
 skills/ and skills/custom/ so no registration is needed.
 """
 
-import sys
 import os
+import sys
+
 # Allow importing from the project root when running standalone
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from skills import SkillBase
 from core.ollama_client import query_model
+from skills import SkillBase
 
 
 class MyCustomSkill(SkillBase):

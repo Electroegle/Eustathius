@@ -1,6 +1,7 @@
 import re
-from skills.skill_loader import load_skills
+
 from plugins.plugin_loader import load_plugins
+from skills.skill_loader import load_skills
 
 SKILLS = load_skills() + load_plugins()
 

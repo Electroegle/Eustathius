@@ -15,13 +15,13 @@ called from both sync and async contexts.
 """
 
 import time
+from dataclasses import dataclass
+
 import psutil
-from dataclasses import dataclass, field
-from typing import Optional
 
 # ── Rolling I/O baseline ─────────────────────────────────────────────────────
 _last_io_time: float = 0.0
-_last_io_counters: Optional[psutil._common.sdiskio] = None
+_last_io_counters: psutil._common.sdiskio | None = None
 
 
 @dataclass

@@ -13,22 +13,35 @@ htmlcov/
 venv/
 env/
 
-# Runtime state
+# Runtime state — never commit these
 .eustathius_history
 logs/
 conversations/
 memory_db/
 db/*.db
-db/*.sqlite*
+db/*.sqlite
+db/*.sqlite3
 db/task_queue.json
 
-# Local config/secrets
+# Backups created by fs/backup.py
+.eustathius_backups/
+
+# Scheduled jobs
+.eustathius_scheduled.json
+
+# Prompt-optimiser cache
+.eustathius_optimized_prompts/
+
+# Local config / secrets
 .env
 .env.*
 *.local.yaml
+local_config.yaml
 
-# OS/editor
+# OS / editor
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+*.swp
+*.swo
